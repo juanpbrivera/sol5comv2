@@ -1,4 +1,4 @@
-import { PageObject } from '@automation/web-automation-framework';
+import { PageObject } from 'web-continuous-testing-framework-v1';
 import type { CustomWorld  } from '../support/CustomWorld';
 
 export class WelcomeMessageComponent extends PageObject {

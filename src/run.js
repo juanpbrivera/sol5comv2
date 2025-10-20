@@ -1,2 +1,2 @@
 #!/usr/bin/env node
-require('../../Framework5/src/scripts/test-runner');
+require('web-continuous-testing-framework-v1/scripts/test-runner');

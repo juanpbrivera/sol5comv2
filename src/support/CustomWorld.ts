@@ -1,4 +1,4 @@
-import { AutomatizacionWeb } from '@automation/web-automation-framework';
+import { AutomatizacionWeb } from 'web-continuous-testing-framework-v1';
 import { setWorldConstructor } from '@cucumber/cucumber';
 import { LoginFlow } from '../flows/LoginFlow';
 
