@@ -7,12 +7,12 @@ Feature: Login de Usuario
   Background:
     Given que navego a la página de login
 
-  @LoginCredenciales @smoke
+  @LoginCredenciales @smoke @humo
   Scenario: Login exitoso con vendedor usando JSON
     When ingreso como "vendedor" usando JSON
     Then debo ver el mensaje de bienvenida
 
-  @LoginCredenciales @smoke
+  @LoginCredenciales @smoke @1humo
   Scenario: Login exitoso con vendedor usando CSV
     When ingreso como "vendedor" usando CSV
     Then debo ver el mensaje de bienvenida
