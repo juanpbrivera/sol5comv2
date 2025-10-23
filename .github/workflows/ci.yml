@@ -23,14 +23,18 @@ permissions:
   contents: read
   packages: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   tests:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 45
     strategy:
       fail-fast: false
       matrix:
-        browser: [chromium]  # agrega firefox si deseas
+        browser: [chromium]   # Agrega 'firefox' si lo deseas
     defaults:
       run:
         working-directory: ./src
@@ -49,16 +53,28 @@ jobs:
           node-version: 20
           registry-url: https://npm.pkg.github.com
           scope: '@juanpbrivera'
+          always-auth: true
           cache: npm
           cache-dependency-path: ./src/package-lock.json
 
-      # - name: Auth to GitHub Packages
-      #   run: |
-      #     echo "@juanpbrivera:registry=https://npm.pkg.github.com" >> ~/.npmrc
-      #     echo "always-auth=true" >> ~/.npmrc
-      #     echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> ~/.npmrc
+      # Forzamos .npmrc en el workspace para que npm use el registry y el token
+      - name: Configure npm for GitHub Packages (project-level)
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "@juanpbrivera:registry=https://npm.pkg.github.com" > .npmrc
+          echo "always-auth=true" >> .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> .npmrc
+
+      # Diagnóstico opcional (si falla aquí, la auth al registry no está bien)
+      - name: npm whoami (diagnóstico)
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm whoami --registry=https://npm.pkg.github.com
 
       - name: Install deps
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm ci
 
       - name: Install Playwright browsers
@@ -66,7 +82,7 @@ jobs:
 
       - name: Run tests (Cucumber)
         run: |
-          echo "Browser: ${{ matrix.browser }} | TEST_ENV: $TEST_ENV"
+          echo "Browser=${{ matrix.browser }}  TEST_ENV=${TEST_ENV}  TAGS='${{ inputs.cucumber_tags }}'"
           if [ -n "${{ inputs.cucumber_tags }}" ]; then
             npm run test:tag -- "${{ inputs.cucumber_tags }}"
           else
