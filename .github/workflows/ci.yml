@@ -52,11 +52,11 @@ jobs:
           cache: npm
           cache-dependency-path: ./src/package-lock.json
 
-      - name: Auth to GitHub Packages
-        run: |
-          echo "@juanpbrivera:registry=https://npm.pkg.github.com" >> ~/.npmrc
-          echo "always-auth=true" >> ~/.npmrc
-          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> ~/.npmrc
+      # - name: Auth to GitHub Packages
+      #   run: |
+      #     echo "@juanpbrivera:registry=https://npm.pkg.github.com" >> ~/.npmrc
+      #     echo "always-auth=true" >> ~/.npmrc
+      #     echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> ~/.npmrc
 
       - name: Install deps
         run: npm ci
