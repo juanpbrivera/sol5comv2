@@ -4,7 +4,7 @@ module.exports = {
     require: [
       'support/CustomWorld.ts',
       'support/hooks.ts',
-      'Spect/*.ts'  // ← Cambiado de features/steps/ a Spect/
+      'spect/*.ts'  // ← Cambiado de features/steps/ a Spect/
     ],
     format: ['progress'],
     parallel: 0
