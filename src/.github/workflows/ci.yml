@@ -1,0 +1,86 @@
+name: CI Solución (Playwright + Cucumber)
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+    inputs:
+      test_env:
+        description: "Valor para TEST_ENV (local/dev/cert/prod)"
+        required: true
+        default: "cert"
+        type: choice
+        options: [ "local", "dev", "cert", "prod" ]
+      cucumber_tags:
+        description: 'Tags Cucumber (ej: "@smoke and not @wip")'
+        required: false
+        default: ""
+        type: string
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium]  # agrega firefox si deseas
+    defaults:
+      run:
+        working-directory: ./src
+
+    env:
+      CI: true
+      TEST_ENV: ${{ inputs.test_env || 'cert' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://npm.pkg.github.com
+          scope: '@juanpbrivera'
+          cache: npm
+          cache-dependency-path: ./src/package-lock.json
+
+      - name: Auth to GitHub Packages
+        run: |
+          echo "@juanpbrivera:registry=https://npm.pkg.github.com" >> ~/.npmrc
+          echo "always-auth=true" >> ~/.npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> ~/.npmrc
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps ${{ matrix.browser }}
+
+      - name: Run tests (Cucumber)
+        run: |
+          echo "Browser: ${{ matrix.browser }} | TEST_ENV: $TEST_ENV"
+          if [ -n "${{ inputs.cucumber_tags }}" ]; then
+            npm run test:tag -- "${{ inputs.cucumber_tags }}"
+          else
+            npm test
+          fi
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports-${{ matrix.browser }}
+          path: |
+            reports/**
+            test-results/**
+            playwright-report/**
+            traces/**
+          retention-days: 10
