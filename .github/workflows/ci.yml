@@ -78,12 +78,13 @@ jobs:
         run: npm ci
 
 
-      # Descubre la versión exacta de @playwright/test para versionar el cache
+      # Lee la versión de @playwright/test y la escribe en $GITHUB_OUTPUT (sin $(...))
       - name: Read Playwright version
         id: pw
-        run: echo "version=$(node -e \"console.log(require('@playwright/test/package.json').version)\")" >> $GITHUB_OUTPUT
+        run: |
+          node -e "const v=require('@playwright/test/package.json').version; require('fs').appendFileSync(process.env.GITHUB_OUTPUT, 'version='+v+'\n')"
 
-      # Cachea navegadores por SO + versión de Playwright + browser del job
+      # Cachea los binarios de Playwright por SO + versión + browser
       - name: Cache Playwright browsers
         uses: actions/cache@v4
         with:
@@ -92,10 +93,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-ms-playwright-${{ steps.pw.outputs.version }}-
 
-
+      # Instalación rápida (solo el browser necesario y SIN --with-deps)
       - name: Install Playwright browsers
         run: npx playwright install ${{ matrix.browser }}
-
 
       - name: Resolve TAGS (default on push/PR)
         run: |
