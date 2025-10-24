@@ -1,0 +1,35 @@
+{
+  "env": "cert",
+  "baseUrl": "https://pva.qas.banbif.com.pe",
+  "browser": "chromium",
+  "headless": false,
+  "trace": "retain-on-failure",
+  "video": false,
+  "screenshotMode": "always",
+  "timeout": 45000,
+  "timeoutMultipliers": {
+    "playwright": 0.83,
+    "assertion": 0.75,
+    "step": 0.5
+  },
+  "contextOptions": {
+    "viewport": {
+      "width": 1366,
+      "height": 768
+    },
+    "locale": "es-PE",
+    "timezoneId": "America/Lima"
+  },
+  "dataPrueba": {
+    "credenciales": {
+      "vendedor": {
+        "usuario": "VendedorBanco",
+        "password": "B4nbif$P3rv"
+      },
+      "aprobador": {
+        "usuario": "AprobadorBanco",
+        "password": "B4nbif$P3rv"
+      }
+    }
+  }
+}
