@@ -80,6 +80,14 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps ${{ matrix.browser }}
 
+      - name: Resolve TAGS (default on push/PR)
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ inputs.cucumber_tags }}" ]; then
+            echo "TAGS=${{ inputs.cucumber_tags }}" >> $GITHUB_ENV
+          else
+            echo "TAGS=@humo" >> $GITHUB_ENV   # <- default para push/PR
+          fi
+
       - name: Run tests (Cucumber)
         run: |
           echo "Browser=${{ matrix.browser }}  TEST_ENV=${TEST_ENV}  TAGS='${{ inputs.cucumber_tags }}'"
