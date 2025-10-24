@@ -1,6 +1,6 @@
 import { Before, After, AfterStep, AfterAll, setDefaultTimeout, Status } from '@cucumber/cucumber';
 import { CustomWorld } from './CustomWorld';
-import { AutomatizacionWeb } from 'web-continuous-testing-framework-v1';
+import { AutomatizacionWeb } from '@juanpbrivera/web-continuous-testing-framework-v1';
 
 const logger = AutomatizacionWeb.crearLogger('CucumberHooks');
 

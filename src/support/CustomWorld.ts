@@ -1,4 +1,4 @@
-import { AutomatizacionWeb } from 'web-continuous-testing-framework-v1';
+import { AutomatizacionWeb } from '@juanpbrivera/web-continuous-testing-framework-v1';
 import { setWorldConstructor } from '@cucumber/cucumber';
 import { ConsultaOfertasFlow } from '../flows/ConsultaOfertasFlow';
 import { LoginFlow } from '../flows/LoginFlow';
