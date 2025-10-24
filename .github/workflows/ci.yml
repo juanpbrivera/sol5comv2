@@ -14,7 +14,7 @@ on:
         type: choice
         options: [ "local", "dev", "cert", "prod" ]
       cucumber_tags:
-        description: 'Tags Cucumber (ej: "@smoke and not @wip")'
+        description: 'Tags Cucumber (ej: "@humo")'
         required: false
         default: ""
         type: string
@@ -95,8 +95,9 @@ jobs:
         with:
           name: reports-${{ matrix.browser }}
           path: |
-            reports/**
-            test-results/**
-            playwright-report/**
-            traces/**
+            src/reports/**
+            src/test-results/**
+            src/playwright-report/**
+            src/traces/**
+          if-no-files-found: warn
           retention-days: 10
