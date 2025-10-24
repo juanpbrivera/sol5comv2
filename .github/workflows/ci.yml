@@ -77,8 +77,25 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm ci
 
+
+      # Descubre la versión exacta de @playwright/test para versionar el cache
+      - name: Read Playwright version
+        id: pw
+        run: echo "version=$(node -e \"console.log(require('@playwright/test/package.json').version)\")" >> $GITHUB_OUTPUT
+
+      # Cachea navegadores por SO + versión de Playwright + browser del job
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-ms-playwright-${{ steps.pw.outputs.version }}-${{ matrix.browser }}
+          restore-keys: |
+            ${{ runner.os }}-ms-playwright-${{ steps.pw.outputs.version }}-
+
+
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps ${{ matrix.browser }}
+        run: npx playwright install ${{ matrix.browser }}
+
 
       - name: Resolve TAGS (default on push/PR)
         run: |
