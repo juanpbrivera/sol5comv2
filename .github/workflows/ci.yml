@@ -82,17 +82,17 @@ jobs:
 
       - name: Resolve TAGS (default on push/PR)
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ inputs.cucumber_tags }}" ]; then
+          if [ -n "${{ inputs.cucumber_tags }}" ]; then
             echo "TAGS=${{ inputs.cucumber_tags }}" >> $GITHUB_ENV
           else
-            echo "TAGS=@humo" >> $GITHUB_ENV   # <- default para push/PR
+            echo "TAGS=@humo" >> $GITHUB_ENV   # valor por defecto
           fi
 
       - name: Run tests (Cucumber)
         run: |
-          echo "Browser=${{ matrix.browser }}  TEST_ENV=${TEST_ENV}  TAGS='${{ inputs.cucumber_tags }}'"
-          if [ -n "${{ inputs.cucumber_tags }}" ]; then
-            npm run test:tag -- "${{ inputs.cucumber_tags }}"
+          echo "Browser=${{ matrix.browser }}  TEST_ENV=${TEST_ENV}  TAGS='${TAGS}'"
+          if [ -n "$TAGS" ]; then
+            npm run test:tag -- "$TAGS"
           else
             npm test
           fi
